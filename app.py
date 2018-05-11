@@ -47,7 +47,7 @@ class ImgGen:
 
     def generateImage(self):
         #Base on https://stackoverflow.com/questions/20304438/how-can-i-use-the-python-imaging-library-to-create-a-bitmap
-        img = Image.new('RGB', (10, 10), "black")  # Create a new black image
+        img = Image.new('RGB', (128, 128), "black")  # Create a new black image
         pixels = img.load()  # Create the pixel map
         k=0
         GeneratedRGB=self.RGBin3s()
