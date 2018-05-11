@@ -33,30 +33,23 @@ class RandGetter:
 class ImgGen:
     def __init__(self, RGBs):
         self.RGBs=RGBs
-    #I generated
-    def RGBin3s(self):
-        temp=[]
-        mainRGB=[]
-        for i in self.RGBs:
-            if len(temp)<3:
-                temp.append(i)
-            else:
-                mainRGB.append(temp)
-                temp = []
-        return mainRGB
+    #Image generator
 
     def generateImage(self):
         #Base on https://stackoverflow.com/questions/20304438/how-can-i-use-the-python-imaging-library-to-create-a-bitmap
         img = Image.new('RGB', (128, 128), "black")  # Create a new black image
         pixels = img.load()  # Create the pixel map
-        k=0
-        GeneratedRGB=self.RGBin3s()
+        RGBvs,k,rgb1,rgb2,rgb3=self.RGBs,0,0,0,0
+        print("The dimensionf of the Randoms = {}".format(len(RGBvs)))
         for i in range(img.size[0]):  # For every pixel:
             for j in range(img.size[1]):
-                # This is too inefficient so I will generate 128*128 numbers in one go and read them from the results.
-                RGB = GeneratedRGB[k]
-                pixels[i, j] = (RGB[0], RGB[1], RGB[2])  # Set the colour accordingly
+                # Will fetch individual values from the RGBin 3s list.
+                r1,r2,r3=RGBvs[rgb1],RGBvs[rgb2], RGBvs[rgb3]
+                pixels[i, j] = (r1, r2, r3)  # Set the colour accordingly
                 k+=1
+                rgb1+=3
+                rgb2+=3
+                rgb3+=3
         return img.show()
 
 #Based on http://codingmess.blogspot.com/2008/07/how-to-make-simple-wav-file-with-python.html
@@ -73,12 +66,10 @@ class SoundFile:
        self.omega = math.pi * 2 / self.period
        self.xaxis = N.arange(int(self.period), dtype=N.float) * self.omega
        self.ydata = 16384 * N.sin(self.xaxis)
-
    def write(self):
        self.file.setparams((1, 2, self.sr, 44100*4, 'NONE', 'noncompressed'))
        self.file.writeframes(self.signal)
        self.file.close()
-
 """
 def GenerateRandoms():
     i, randomsVals = 0, []
@@ -90,19 +81,22 @@ def GenerateRandoms():
         #Used Pythons pseudo random to keep my quotas safe when testing.
         #sample=[random.randint for x in range(0, 9999)]
         #randomsVals.append(sample)
+        i+=1
     combinedRands = []
     for generateArrays in randomsVals:
         for randomValues in generateArrays:
-            combinedRands.append(randomsVals)
+            combinedRands.append(randomValues)
     #This will be passed into the bmp generator and processed by the 3s splitter.
     # I know I can combine the steps to make it faster but I ran out of time.
+
     return combinedRands
 
 #Imagefrom the RGBs:
 RGBs = GenerateRandoms()
-Image = ImgGen(RGBs=RGBs)
+print( len(RGBs))
+ImageInstance = ImgGen(RGBs=RGBs)
 
-Image.generateImage()
+ImageInstance.generateImage()
 
 
 #Never got to it quite yet but I had the concept figured out.
@@ -113,7 +107,6 @@ signal = N.resize(ydata, (samples,))
 ssignal = ''
 for i in range(len(signal)):
    ssignal += wave.struct.pack('h',signal[i]) # transform to binary
-
 f = SoundFile(ssignal)
 f.write()
 """
